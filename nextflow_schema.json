@@ -20,7 +20,7 @@
                     "mimetype": "text/csv",
                     "pattern": "^\\S+\\.csv$",
                     "description": "Path to comma-separated file containing information about the samples in the experiment.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.",
+                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 2 columns (`sample` and `fastq_1`) and a header row.",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "outdir": {
@@ -40,6 +40,12 @@
                     "type": "string",
                     "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
+                },
+                "with_umi": {
+                    "type": "boolean",
+                    "description": "Enable the optional UMI preprocessing branch (UMICollapse, seqtk trim, FastQC).",
+                    "default": false,
+                    "fa_icon": "fas fa-toggle-on"
                 }
             }
         },
@@ -62,7 +68,17 @@
                     "mimetype": "text/plain",
                     "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
                     "description": "Path to FASTA genome file.",
-                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
+                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. The workflow uses this FASTA to build a Bowtie index when one is not already available through `--genome`.",
+                    "fa_icon": "far fa-file-code"
+                },
+                "gtf": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/plain",
+                    "pattern": "^\\S+\\.(gtf|gff|gff3)(\\.gz)?$",
+                    "description": "Path to transcript annotation in GTF/GFF format.",
+                    "help_text": "Used for read summarisation with featureCounts. If `--genome` is specified and a compatible annotation is available in iGenomes, this will be populated automatically.",
                     "fa_icon": "far fa-file-code"
                 },
                 "igenomes_ignore": {
@@ -205,6 +221,12 @@
                     "description": "Custom MultiQC yaml file containing HTML including a methods description.",
                     "fa_icon": "fas fa-cog"
                 },
+                "umi_seqtk_trim_args": {
+                    "type": "string",
+                    "description": "Additional arguments passed to seqtk trimfq within the optional UMI preprocessing branch.",
+                    "default": "",
+                    "fa_icon": "fas fa-scissors"
+                },
                 "validate_params": {
                     "type": "boolean",
                     "description": "Boolean whether to validate parameters against the schema at runtime",
@@ -227,15 +249,15 @@
                 },
                 "help": {
                     "type": ["boolean", "string"],
-                    "description": "Display the help message.",
+                    "description": "Display the help message."
                 },
                 "help_full": {
                     "type": "boolean",
-                    "description": "Display the full detailed help message.",
+                    "description": "Display the full detailed help message."
                 },
                 "show_hidden": {
                     "type": "boolean",
-                    "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided).",
+                    "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided)."
                 }
             }
         }

@@ -13,7 +13,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { 22G_SIRNAS  } from './workflows/22g_sirnas'
+include { NF_22G_SIRNAS } from './workflows/22g_sirnas'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_22g_sirnas_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_22g_sirnas_pipeline'
 include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_22g_sirnas_pipeline'
@@ -27,7 +27,8 @@ include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_22g_
 // TODO nf-core: Remove this line if you don't need a FASTA file
 //   This is an example of how to use getGenomeAttribute() to fetch parameters
 //   from igenomes.config using `--genome`
-params.fasta = getGenomeAttribute('fasta')
+params.fasta = params.fasta ?: getGenomeAttribute('fasta')
+params.gtf = params.gtf ?: getGenomeAttribute('gtf')
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,11 +49,14 @@ workflow NFDATAOMICS_22G_SIRNAS {
     //
     // WORKFLOW: Run pipeline
     //
-    22G_SIRNAS (
+    NF_22G_SIRNAS (
         samplesheet
     )
     emit:
-    multiqc_report = 22G_SIRNAS.out.multiqc_report // channel: /path/to/multiqc_report.html
+    featurecounts = NF_22G_SIRNAS.out.featurecounts
+    featurecounts_summary = NF_22G_SIRNAS.out.featurecounts_summary
+    multiqc_report = NF_22G_SIRNAS.out.multiqc_report // channel: /path/to/multiqc_report.html
+    versions = NF_22G_SIRNAS.out.versions
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

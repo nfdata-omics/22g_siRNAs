@@ -5,6 +5,21 @@
         "https://github.com/nf-core/modules.git": {
             "modules": {
                 "nf-core": {
+                    "bowtie/align": {
+                        "branch": "master",
+                        "git_sha": "fbcb1dd0d47e88a688c3a16cb13ccb51ba774d15",
+                        "installed_by": ["modules"]
+                    },
+                    "bowtie/build": {
+                        "branch": "master",
+                        "git_sha": "fbcb1dd0d47e88a688c3a16cb13ccb51ba774d15",
+                        "installed_by": ["modules"]
+                    },
+                    "cutadapt": {
+                        "branch": "master",
+                        "git_sha": "624977dfaf562211e68a8a868ca80acc8461f1ac",
+                        "installed_by": ["modules"]
+                    },
                     "fastqc": {
                         "branch": "master",
                         "git_sha": "41dfa3f7c0ffabb96a6a813fe321c6d1cc5b6e46",
@@ -13,6 +28,56 @@
                     "multiqc": {
                         "branch": "master",
                         "git_sha": "e10b76ca0c66213581bec2833e30d31f239dec0b",
+                        "installed_by": ["modules"]
+                    },
+                    "samtools/flagstat": {
+                        "branch": "master",
+                        "git_sha": "156feda0cb6589cd29c04902004fa3b53bc00205",
+                        "installed_by": ["modules"]
+                    },
+                    "samtools/index": {
+                        "branch": "master",
+                        "git_sha": "156feda0cb6589cd29c04902004fa3b53bc00205",
+                        "installed_by": ["modules"]
+                    },
+                    "seqkit/grep": {
+                        "branch": "master",
+                        "git_sha": "149a22b7f9447e73f1f0c34de2e239fdd63af393",
+                        "installed_by": ["modules"]
+                    },
+                    "seqkit/rmdup": {
+                        "branch": "master",
+                        "git_sha": "bf70cbf44b42ff4a81afcb673fcef604f5ef3a85",
+                        "installed_by": ["modules"]
+                    },
+                    "seqkit/seq": {
+                        "branch": "master",
+                        "git_sha": "bf70cbf44b42ff4a81afcb673fcef604f5ef3a85",
+                        "installed_by": ["modules"]
+                    },
+                    "seqtk/trim": {
+                        "branch": "master",
+                        "git_sha": "a46713779030a5f508117080cbf4b693dd4c6e33",
+                        "installed_by": ["modules"]
+                    },
+                    "subread/featurecounts": {
+                        "branch": "master",
+                        "git_sha": "95cc6bff05f02c53ac9478f7b8d749969c514fca",
+                        "installed_by": ["modules"]
+                    },
+                    "trimgalore": {
+                        "branch": "master",
+                        "git_sha": "eed5d14302a6c9070dcc25feeab707a27a4b3254",
+                        "installed_by": ["modules"]
+                    },
+                    "umitools/dedup": {
+                        "branch": "master",
+                        "git_sha": "bd6d730b3f32742f402189113ba9480006a3350f",
+                        "installed_by": ["modules"]
+                    },
+                    "umitools/extract": {
+                        "branch": "master",
+                        "git_sha": "bd6d730b3f32742f402189113ba9480006a3350f",
                         "installed_by": ["modules"]
                     }
                 }
