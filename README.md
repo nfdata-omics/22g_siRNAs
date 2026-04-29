@@ -14,50 +14,65 @@
 
 ## Introduction
 
-**nfdata-omics/22g_sirnas** is a bioinformatics pipeline for identifying and quantifying 22G siRNAs from single-end Illumina FASTQ reads using a reference FASTA and GTF annotation. The workflow performs raw read QC, adapter trimming, quality filtering, optional UMI processing, enrichment of reads with the expected 5' G signature, alignment with Bowtie, and quantification with featureCounts. It produces cleaned intermediate read files, aligned BAM files, count tables, and consolidated QC and run reports through MultiQC and Nextflow pipeline metadata.
+**nfdata-omics/22g_sirnas** is a bioinformatics pipeline for identifying and quantifying 22G siRNAs from single-end Illumina FASTQ reads using a reference FASTA and GTF annotation. The workflow performs raw read QC, adapter trimming, quality filtering, optional UMI processing, enrichment of reads with the expected 5' G signature, alignment with Bowtie, and quantification with featureCounts. It produces cleaned intermediate read files, aligned BAM files, count tables, and consolidated QC and run reports through MultiQC and Nextflow pipeline metadata. This pipeline describes [[Almeida et al. 2019]](https://doi.org/10.1016/j.mex.2019.01.009) work.  
 
 <!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
      workflows use the "tube map" design for that. See https://nf-co.re/docs/guidelines/graphic_design/workflow_diagrams#examples for examples.   -->
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+By default, the pipeline follows these steps:
+
+1. Assess raw read quality with [`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/).
+2. Trim adapters and retain reads in the expected small RNA size range with [`cutadapt`](https://cutadapt.readthedocs.io/).
+3. Re-assess trimmed reads with `FastQC`.
+4. Filter reads by base quality using the custom [`FASTQ_QUALITY_FILTER`](modules/local/fastq_quallity_filter/main.nf) step.
+5. Optionally process UMIs, trim UMI-derived bases, and run QC again when `--with_umi` is enabled using [`UMICollapse`](https://github.com/Daniel-Liu-c0deb0t/UMICollapse), [`seqtk`](https://github.com/lh3/seqtk), and [`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/).
+6. Select reads of exactly 22 nt with [`seqkit seq`](https://bioinf.shenwei.me/seqkit/usage/#seq).
+7. Retain reads matching the expected 5' motif, by default `^G`, with [`seqkit grep`](https://bioinf.shenwei.me/seqkit/usage/#grep).
+8. Build the [`Bowtie`](https://bowtie-bio.sourceforge.net/index.shtml) index from the provided reference FASTA.
+9. Align filtered 22G reads to the reference with [`Bowtie`](https://bowtie-bio.sourceforge.net/index.shtml).
+10. Quantify aligned reads against the provided annotation with [`featureCounts`](https://subread.sourceforge.net/featureCounts.html).
+11. Collate QC metrics, logs, and software versions into a final [`MultiQC`](http://multiqc.info/) report.
 
 ## Usage
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
-
-First, prepare a samplesheet with your input data that looks as follows:
+First, prepare a samplesheet with one row per sample and a header exactly matching the expected column names:
 
 `samplesheet.csv`:
 
 ```csv
 sample,fastq_1
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz
+CONTROL_REP1,/path/to/CONTROL_REP1.fastq.gz
+CONTROL_REP2,/path/to/CONTROL_REP2.fastq.gz
 ```
 
-Each row represents one single-end FASTQ file.
+The pipeline is single-end only and currently expects exactly one gzipped FASTQ file per sample.
 
--->
+| Column | Description |
+| --- | --- |
+| `sample` | Unique sample name without spaces. |
+| `fastq_1` | Full path to the input FASTQ file ending in `.fastq.gz` or `.fq.gz`. |
 
-Now, you can run the pipeline using:
-
-<!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
+Then run the pipeline with the samplesheet, an output directory, and either a configured `--genome` or both a reference FASTA and GTF annotation:
 
 ```bash
 nextflow run nfdata-omics/22g_sirnas \
    -profile <docker/singularity/.../institute> \
    --input samplesheet.csv \
+   --fasta reference.fa \
+   --gtf annotation.gtf \
    --outdir <OUTDIR>
 ```
+
+To customise the 5' motif retained by `seqkit grep`, set `--grep_pattern`. The default is `^G`, which keeps reads starting with `G`.
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 
 ## Credits
 
-nfdata-omics/22g_sirnas was originally written by K. Ruiz-Ceja.
+nfdata-omics/22g_sirnas was originally written by Karla Alejandra Ruiz-Ceja.
 
 We thank the following people for their extensive assistance in the development of this pipeline:
 

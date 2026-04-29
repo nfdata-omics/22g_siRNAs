@@ -227,6 +227,12 @@
                     "default": "",
                     "fa_icon": "fas fa-scissors"
                 },
+                "grep_pattern": {
+                    "type": "string",
+                    "description": "Regular expression passed to seqkit grep to retain reads with the expected 5' motif.",
+                    "default": "^G",
+                    "fa_icon": "fas fa-filter"
+                },
                 "validate_params": {
                     "type": "boolean",
                     "description": "Boolean whether to validate parameters against the schema at runtime",

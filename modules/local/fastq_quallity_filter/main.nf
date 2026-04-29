@@ -27,7 +27,7 @@ process FASTQ_QUALITY_FILTER {
         -q ${quality} \\
         -p ${min_bases} \\
         -Q ${phred} \\
-        -o /dev/stdout \\
+        -v \\
         2> ${prefix}.qf_stats.txt \\
     | gzip > ${prefix}.qf.fastq.gz
     """

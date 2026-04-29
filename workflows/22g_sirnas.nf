@@ -3,7 +3,7 @@
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-include { FASTQC                      } from '../modules/nf-core/fastqc/main'
+include { FASTQC as FASTQC_RAW        } from '../modules/nf-core/fastqc/main'
 include { FASTQC as FASTQC_TRIM       } from '../modules/nf-core/fastqc/main'
 include { CUTADAPT                    } from '../modules/nf-core/cutadapt/main'
 include { FASTQ_QUALITY_FILTER        } from '../modules/local/fastq_quallity_filter/main'
@@ -13,6 +13,7 @@ include { SEQKIT_GREP                 } from '../modules/nf-core/seqkit/grep/mai
 include { BOWTIE_BUILD                } from '../modules/nf-core/bowtie/build/main'
 include { BOWTIE_ALIGN                } from '../modules/nf-core/bowtie/align/main'
 include { SUBREAD_FEATURECOUNTS       } from '../modules/nf-core/subread/featurecounts/main'
+include { MERGE_FEATURECOUNTS         } from '../modules/local/merge_featurecounts/main'
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 include { paramsSummaryMap          } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc      } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -41,18 +42,18 @@ workflow NF_22G_SIRNAS {
         file(params.fasta, checkIfExists: true)
     ])
     ch_annotation = Channel.value(file(params.gtf, checkIfExists: true))
-    ch_g_start_pattern = Channel.fromPath(
-        "$projectDir/assets/seqkit_g_start_pattern.txt", checkIfExists: true
-    )
+    ch_grep_pattern = Channel.value(
+        file("$projectDir/assets/seqkit_g_start_pattern.txt", checkIfExists: true
+    ))
 
     //
     // MODULE: Run FastQC on raw reads
     //
-    FASTQC (
+    FASTQC_RAW (
         ch_samplesheet
     )
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect { it[1] })
-    ch_versions = ch_versions.mix(FASTQC.out.versions.first())
+    ch_multiqc_files = ch_multiqc_files.mix(FASTQC_RAW.out.zip.collect { it[1] })
+    ch_versions = ch_versions.mix(FASTQC_RAW.out.versions.first())
 
     //
     // MODULE: filter by size
@@ -97,7 +98,7 @@ workflow NF_22G_SIRNAS {
 
     SEQKIT_GREP(
         SEQKIT_SEQ.out.fastx,
-        ch_g_start_pattern
+        ch_grep_pattern
     )
     ch_versions = ch_versions.mix(SEQKIT_GREP.out.versions_seqkit)
     ch_22g_reads = SEQKIT_GREP.out.filter.filter { meta, reads ->
@@ -133,6 +134,11 @@ workflow NF_22G_SIRNAS {
     ch_multiqc_files = ch_multiqc_files.mix(SUBREAD_FEATURECOUNTS.out.counts.collect { it[1] })
     ch_multiqc_files = ch_multiqc_files.mix(SUBREAD_FEATURECOUNTS.out.summary.collect { it[1] })
 
+    ch_counts = SUBREAD_FEATURECOUNTS.out.counts
+            .map { meta, counts -> counts }
+            .collect()
+    MERGE_FEATURECOUNTS(ch_counts)
+
     //
     // Collate and save software versions
     //
@@ -159,7 +165,7 @@ workflow NF_22G_SIRNAS {
         Channel.empty()
     ch_multiqc_logo          = params.multiqc_logo ?
         Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
-        Channel.empty()
+        Channel.fromPath("$projectDir/assets/ht_logo.png", checkIfExists: true)
 
     summary_params      = paramsSummaryMap(
         workflow, parameters_schema: "nextflow_schema.json")
