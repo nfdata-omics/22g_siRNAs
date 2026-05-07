@@ -12,6 +12,7 @@ include { SEQKIT_SEQ                  } from '../modules/nf-core/seqkit/seq/main
 include { SEQKIT_GREP                 } from '../modules/nf-core/seqkit/grep/main'
 include { BOWTIE_BUILD                } from '../modules/nf-core/bowtie/build/main'
 include { BOWTIE_ALIGN                } from '../modules/nf-core/bowtie/align/main'
+include { RNA_21U_PRECURSORS          } from '../subworkflows/local/21U_rna_precursors/main'
 include { SUBREAD_FEATURECOUNTS       } from '../modules/nf-core/subread/featurecounts/main'
 include { MERGE_FEATURECOUNTS         } from '../modules/local/merge_featurecounts/main'
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
@@ -37,9 +38,14 @@ workflow NF_22G_SIRNAS {
     ch_final_reads = Channel.empty()
     ch_22g_reads = Channel.empty()
     ch_aligned_bam = Channel.empty()
+    ch_precursor_plots = Channel.empty()
     ch_reference_fasta = Channel.value([
         [id: 'reference'],
         file(params.fasta, checkIfExists: true)
+    ])
+    ch_annotated_21u_loci = Channel.value([
+        [id: 'annotated_21u_rna_loci'],
+        file(params.annotated_21u_loci, checkIfExists: true)
     ])
     ch_annotation = Channel.value(file(params.gtf, checkIfExists: true))
     ch_grep_pattern = Channel.value(
@@ -124,6 +130,13 @@ workflow NF_22G_SIRNAS {
     ch_versions = ch_versions.mix(BOWTIE_ALIGN.out.versions_gzip)
     ch_multiqc_files = ch_multiqc_files.mix(BOWTIE_ALIGN.out.log.collect { it[1] })
     ch_aligned_bam = BOWTIE_ALIGN.out.bam
+
+    RNA_21U_PRECURSORS(
+        ch_aligned_bam,
+        ch_reference_fasta,
+        ch_annotated_21u_loci
+    )
+    ch_versions = ch_versions.mix(RNA_21U_PRECURSORS.out.versions)
 
     SUBREAD_FEATURECOUNTS(
         ch_aligned_bam

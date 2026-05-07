@@ -1,0 +1,38 @@
+name: bedtools_sort
+description: Sort interval records with bedtools sort
+keywords:
+  - bedtools
+  - sort
+  - bed
+tools:
+  - bedtools:
+      description: A powerful toolset for genome arithmetic
+      homepage: https://bedtools.readthedocs.io/
+      documentation: https://bedtools.readthedocs.io/en/latest/content/tools/sort.html
+      tool_dev_url: https://github.com/arq5x/bedtools2
+      licence: ["MIT"]
+input:
+  - - meta:
+        type: map
+        description: Groovy Map containing sample information
+    - intervals:
+        type: file
+        description: Interval file to sort
+  - - meta2:
+        type: map
+        description: Groovy Map containing reference metadata
+    - chrom_sizes:
+        type: file
+        description: FASTA index file used to define contig order
+output:
+  - bed:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "*.bed":
+          type: file
+          description: Sorted interval file
+  - versions:
+      - versions.yml:
+          type: file
+          description: File containing software versions

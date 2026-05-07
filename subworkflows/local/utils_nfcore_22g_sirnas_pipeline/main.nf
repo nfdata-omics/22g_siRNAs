@@ -168,6 +168,9 @@ def validateInputParameters() {
     if (!params.gtf) {
         error("A transcript annotation is required for antisense 22G-RNA counting. Please provide `--gtf` or select a configured `--genome` with annotation.")
     }
+    if (!params.annotated_21u_loci) {
+        error("Annotated 21U-RNA loci are required to identify putative precursors. Please provide `--annotated_21u_loci`.")
+    }
 }
 
 //
@@ -224,6 +227,8 @@ def toolCitationText() {
             "Seqtk (Li),",
             "SeqKit (Shen et al. 2016),",
             "Bowtie (Langmead et al. 2009),",
+            "SAMtools (Danecek et al. 2021),",
+            "BEDTools (Quinlan and Hall 2010),",
             "Subread featureCounts (Liao et al. 2014),",
             "MultiQC (Ewels et al. 2016)",
             "."
@@ -244,6 +249,8 @@ def toolBibliographyText() {
             "<li>Li H. Seqtk toolkit for processing sequences in FASTA/Q formats. URL: https://github.com/lh3/seqtk</li>",
             "<li>Shen W, Le S, Li Y, Hu F. (2016) SeqKit: A cross-platform and ultrafast toolkit for FASTA/Q file manipulation. PLoS ONE, 11(10), e0163962. doi: 10.1371/journal.pone.0163962</li>",
             "<li>Langmead B, Trapnell C, Pop M, Salzberg SL. (2009) Ultrafast and memory-efficient alignment of short DNA sequences to the human genome. Genome Biology, 10(3), R25. doi: 10.1186/gb-2009-10-3-r25</li>",
+            "<li>Danecek P, Bonfield JK, Liddle J, et al. (2021) Twelve years of SAMtools and BCFtools. GigaScience, 10(2), giab008. doi: 10.1093/gigascience/giab008</li>",
+            "<li>Quinlan AR, Hall IM. (2010) BEDTools: a flexible suite of utilities for comparing genomic features. Bioinformatics, 26(6), 841-842. doi: 10.1093/bioinformatics/btq033</li>",
             "<li>Liao Y, Smyth GK, Shi W. (2014) featureCounts: an efficient general purpose program for assigning sequence reads to genomic features. Bioinformatics, 30(7), 923-930. doi: 10.1093/bioinformatics/btt656</li>",
             "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics , 32(19), 3047–3048. doi: /10.1093/bioinformatics/btw354</li>"
         ].join(' ').trim()

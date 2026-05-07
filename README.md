@@ -16,8 +16,8 @@
 
 **nfdata-omics/22g_sirnas** is a bioinformatics pipeline for identifying and quantifying 22G siRNAs from single-end Illumina FASTQ reads using a reference FASTA and GTF annotation. The workflow performs raw read QC, adapter trimming, quality filtering, optional UMI processing, enrichment of reads with the expected 5' G signature, alignment with Bowtie, and quantification with featureCounts. It produces cleaned intermediate read files, aligned BAM files, count tables, and consolidated QC and run reports through MultiQC and Nextflow pipeline metadata. This pipeline describes [[Almeida et al. 2019]](https://doi.org/10.1016/j.mex.2019.01.009) work.  
 
-<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/guidelines/graphic_design/workflow_diagrams#examples for examples.   -->
+![22G siRNAs workflow](assets/22g_sirnas.svg)
+
 By default, the pipeline follows these steps:
 
 1. Assess raw read quality with [`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/).

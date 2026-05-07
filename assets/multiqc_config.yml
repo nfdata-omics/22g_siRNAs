@@ -28,6 +28,7 @@ module_order:
         - "**/*.trim_fastqc.zip"
   - bowtie1
   - featurecounts
+  - custom_content
 report_section_order:
   fastqc_raw:
     order: 10000
@@ -40,6 +41,10 @@ report_section_order:
     order: 7000
   featurecounts:
     order: 6000
+  21u_read_lengths:                         
+    order: 5000
+  21u_first_nt:                             
+    order: 4900
   "nfdata-omics-22g_sirnas-methods-description":
     order: -1000
   multiqc_software_versions:

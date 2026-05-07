@@ -53,6 +53,7 @@ workflow NFDATAOMICS_22G_SIRNAS {
         samplesheet
     )
     emit:
+    //precursor_plots = NF_22G_SIRNAS.out.precursor_plots
     featurecounts = NF_22G_SIRNAS.out.featurecounts
     featurecounts_summary = NF_22G_SIRNAS.out.featurecounts_summary
     multiqc_report = NF_22G_SIRNAS.out.multiqc_report // channel: /path/to/multiqc_report.html

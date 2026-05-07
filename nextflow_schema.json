@@ -81,6 +81,16 @@
                     "help_text": "Used for read summarisation with featureCounts. If `--genome` is specified and a compatible annotation is available in iGenomes, this will be populated automatically.",
                     "fa_icon": "far fa-file-code"
                 },
+                "annotated_21u_loci": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/plain",
+                    "pattern": "^\\S+\\.(bed|bed6|bed12)(\\.gz)?$",
+                    "description": "Path to annotated 21U-RNA loci in BED format.",
+                    "help_text": "These loci are used to identify putative 21U-RNA precursors by retaining reads that overlap annotated 21U-RNA regions with `bedtools intersect -F 0.5`.",
+                    "fa_icon": "far fa-file-code"
+                },
                 "igenomes_ignore": {
                     "type": "boolean",
                     "description": "Do not load the iGenomes reference config.",
